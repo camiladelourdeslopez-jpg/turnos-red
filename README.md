@@ -1,6 +1,5 @@
-# turnos-red
+# Proyecto turnos-red
 API 1 - Integraciones web
-#  Proyecto **turnos-red**
 
 ## Descripción
 Aplicación backend en **Node.js + TypeScript + Express + Socket.IO** para la gestión de turnos médicos.  
