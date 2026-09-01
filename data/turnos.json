@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "paciente": "Juan Pérez",
+    "documento": "12345678",
+    "especialidad": "Clínica",
+    "fecha": "2026-09-01",
+    "hora": "09:00",
+    "confirmado": true,
+    "motivo": "Consulta general"
+  },
+  {
+    "id": 2,
+    "paciente": "María Gómez",
+    "documento": "87654321",
+    "especialidad": "Pediatría",
+    "fecha": "2026-09-02",
+    "hora": "10:30",
+    "confirmado": false,
+    "motivo": "Control rutinario"
+  },
+  {
+    "id": 99,
+    "fecha": "2026-09-01",
+    "paciente": "Paciente Test",
+    "motivo": "Consulta de prueba",
+    "documento": "12345678",
+    "especialidad": "Clínica",
+    "hora": "10:00",
+    "confirmado": false
+  },
+  {
+    "id": 99,
+    "fecha": "2026-09-01",
+    "paciente": "Paciente Test",
+    "motivo": "Consulta de prueba",
+    "documento": "12345678",
+    "especialidad": "Clínica",
+    "hora": "10:00",
+    "confirmado": false
+  },
+  {
+    "id": 99,
+    "fecha": "2026-09-01",
+    "paciente": "Paciente Test",
+    "motivo": "Consulta de prueba",
+    "documento": "12345678",
+    "especialidad": "Clínica",
+    "hora": "10:00",
+    "confirmado": false
+  },
+  {
+    "id": 99,
+    "fecha": "2026-09-01",
+    "paciente": "Paciente Test",
+    "motivo": "Consulta de prueba",
+    "documento": "12345678",
+    "especialidad": "Clínica",
+    "hora": "10:00",
+    "confirmado": false
+  },
+  {
+    "id": 200,
+    "fecha": "2026-09-05",
+    "paciente": "Paciente Update",
+    "motivo": "Chequeo actualizado",
+    "documento": "55555555",
+    "especialidad": "Cardiología",
+    "hora": "10:30",
+    "confirmado": true
+  }
+]
