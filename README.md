@@ -142,4 +142,101 @@ turnos-red/
 ├── tsconfig.json          # Configuración de TypeScript
 └── README.md              # Documentación del proyecto
  ```
+# Proyecto turnos-red
+API 2 - Integraciones web
 
+## Requisitos previos
+- Node.js >= 18
+- npm >= 9
+- VS Code (opcional, recomendado)
+- Postman (para pruebas de API)
+
+## Guía de instalación y ejecución
+```bash 
+Clonar repositorio
+git clone https://github.com/usuario/turnos-medicos.git
+cd turnos-medicos
+```
+### Instalar dependencias
+npm install
+
+### Ejecutar en desarrollo
+npm run dev
+
+### Compilar y ejecutar en producción
+npm run build
+npm start
+
+### Estructura de directorios
+```
+turnos-medicos/
+├── src/
+│   ├── controllers/
+│   ├── routes/
+│   ├── services/
+│   ├── data/
+│   └── index.ts
+├── tests/
+├── .env
+├── .env.example
+├── package.json
+└── README.md
+```
+### Variables de entorno
+
+| Variable | Descripción | Ejemplo |
+| --- | --- | --- |
+| PORT | Puerto de ejecución del servidor | 3000 |
+| DATA_PATH | Ruta al archivo de datos JSON | ./data/turnos.json |
+| baseUrl | URL base para la API | http://localhost:3000 |
+| turnoId | ID de turno fijo para pruebas | 1 |
+| turnoIdCreado | ID dinámico de turno creado | (se setea en Tests) |
+| turnoIdInexistente | ID inexistente para pruebas negativas | 9999 |
+| medicoId | ID de médico fijo para pruebas | 1 |
+| medicoIdInexistente | ID inexistente de médico | 9999 |
+| authToken | Token de autenticación (si aplica) | (ejemplo JWT) |
+
+### Documentacion de endpoints
+```
+GET /turnos → Listar todos los turnos
+GET /turnos/:id → Obtener turno por ID
+POST /turnos → Crear nuevo turno
+PUT /turnos/:id → Actualizar turno existente
+DELETE /turnos/:id → Eliminar turno
+{
+  "paciente": "Carlos López",
+  "documento": "11223344",
+  "especialidad": "Cardiología",
+  "fecha": "2026-09-10",
+  "hora": "14:00",
+  "confirmado": false,
+  "motivo": "Consulta de rutina"
+}
+```
+```
+GET /medicos → Listar todos los médicos
+GET /medicos/:id → Obtener médico por ID
+POST /medicos → Crear nuevo médico
+PUT /medicos/:id → Actualizar médico existente
+DELETE /medicos/:id → Eliminar médico
+{
+  "nombre": "Ana Gómez",
+  "especialidad": "Pediatría",
+  "disponible": true
+}
+
+```
+### Ejemplo de query params
+```
+GET /turnos?especialidad=Cardiología&confirmado=true  
+→ Filtra turnos por especialidad y estado de confirmación.
+```
+### Uso de inteligencia artificial
+
+| Tarea | Herramienta | Prompt utilizado | Respuesta generada | Ajuste manual aplicado |
+| --- | --- | --- | --- | --- |
+| Schema Zod | ChatGPT / Copilot | "Genera un esquema Zod para validar un turno médico" | Código Zod con campos básicos | Corrección de tipos y formato PascalCase |
+| Endpoints CRUD | Copilot | "Dame ejemplos de endpoints REST para Turnos y Médicos" | Listado de rutas GET/POST/PUT/DELETE | Ajuste de nombres y alineación con estructura del repo |
+| Tests en Postman | Copilot | "Genera scripts de validación para cada request en Postman" | Código JS para pestaña Tests | Ajuste de mensajes y variables dinámicas |
+| README inicial | Copilot | "Redacta un README.md con requisitos e instalación" | Bloque Markdown con requisitos y pasos | Inclusión de tabla de variables y estructura de carpetas |
+| Documentación endpoints | Copilot | "Documenta los endpoints con ejemplos de body y query params" | Sección detallada en Markdown | Ajuste de ejemplos y formato JSON |
