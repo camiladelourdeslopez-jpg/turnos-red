@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "nombre": "Dr. Laura Pérez",
+    "especialidad": "Clínica médica",
+    "disponible": true
+  },
+  {
+    "id": 2,
+    "nombre": "Dr. Martín Gómez",
+    "especialidad": "Pediatría",
+    "disponible": false
+  }
+]

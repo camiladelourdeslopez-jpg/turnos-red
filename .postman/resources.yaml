@@ -1,0 +1,10 @@
+workspace:
+  id: 44449a59-7830-4bb7-82d0-674af01afa4c
+localResources:
+  specs:
+    - ../postman/specs/turnos-red.postman_collection/turnos-red.postman_collection.json
+    - ../postman/specs/turnos-red.postman_collection-1/turnos-red.postman_collection-1.json
+resourceNameMappings:
+  specs:
+    - ../postman/specs/turnos-red.postman_collection/turnos-red.postman_collection.json: turnos-red.postman_collection
+    - ../postman/specs/turnos-red.postman_collection-1/turnos-red.postman_collection-1.json: turnos-red.postman_collection

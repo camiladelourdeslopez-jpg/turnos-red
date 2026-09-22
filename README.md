@@ -5,6 +5,80 @@ API 1 - Integraciones web
 Aplicación backend en **Node.js + TypeScript + Express + Socket.IO** para la gestión de turnos médicos.  
 Incluye persistencia en archivo JSON, emisión de eventos en tiempo real y pruebas unitarias con Jest.
 
+## Diagrama de componentes
+```mermaid
+flowchart LR
+    subgraph Cliente["Cliente Web / Postman"]
+        C1["Cliente Web / Navegador"]
+        C2["Postman / curl"]
+    end
+
+    subgraph API["Servidor Express"]
+        R["src/routes\nturnos.routes.ts\nmedicos.routes.ts"]
+        Z["src/schemas\nValidación Zod"]
+        CT["src/controllers"]
+        S["src/services"]
+        E["Eventos internos\nEventEmitter"]
+        IO["Socket.IO Server"]
+    end
+
+    subgraph Persistencia["Persistencia en archivos JSON"]
+        T["data/turnos.json"]
+        M["data/medicos.json"]
+    end
+
+    subgraph WS["Clientes WebSocket conectados"]
+        W1["Cliente WebSocket 1"]
+        W2["Cliente WebSocket 2"]
+    end
+
+    C1 -->|HTTP/REST| R
+    C2 -->|HTTP/REST| R
+    R --> Z
+    Z --> CT
+    CT --> S
+    S --> T
+    S --> M
+    S --> E
+    E --> IO
+    IO --> W1
+    IO --> W2
+    IO --> C1
+```
+
+## Diagrama de secuencia: POST /turnos
+```mermaid
+sequenceDiagram
+    participant Client as Cliente Web / Postman
+    participant Router as Express Router
+    participant Zod as Middleware Zod
+    participant Controller as Controller
+    participant Service as Service
+    participant FS as archivo JSON
+    participant EventBus as EventEmitter
+    participant Socket as Socket.IO Server
+    participant WS as Cliente WebSocket
+
+    Client->>Router: POST /turnos
+    Router->>Zod: Validar payload recibido
+
+    alt Validación OK
+        Zod-->>Router: Datos validados
+        Router->>Controller: createTurno(req, res)
+        Controller->>Service: agregarTurno(nuevoTurno)
+        Service->>FS: Leer JSON actual
+        Service->>FS: Escribir turno nuevo
+        Service-->>EventBus: emitir "turno:nuevo"
+        EventBus-->>Socket: notificar evento interno
+        Socket-->>WS: emit('turno:nuevo', nuevoTurno)
+        Socket-->>Client: HTTP 201 Created
+        Controller-->>Client: JSON del turno creado
+    else Validación falla
+        Zod-->>Router: Error 400 Bad Request
+        Router-->>Client: HTTP 400 Bad Request
+    end
+```
+
 ---
 
 ## Requisitos previos
@@ -231,12 +305,24 @@ DELETE /medicos/:id → Eliminar médico
 GET /turnos?especialidad=Cardiología&confirmado=true  
 → Filtra turnos por especialidad y estado de confirmación.
 ```
+
+## Matriz de Verificación
+
+| Verificación cruzada | Evidencia consultada | Resultado | Observación |
+| --- | --- | --- | --- |
+| Coherencia entre controladores Express y Swagger | `src/routes/turnos.routes.ts`, `src/routes/medicos.routes.ts`, `src/config/swagger.ts`, `src/controllers/*.controller.ts` | Correcta | Las rutas documentadas en Swagger coinciden con los verbos y endpoints implementados por Express: `/turnos`, `/turnos/:id`, `/medicos`, `/medicos/:id` y sus métodos HTTP. |
+| Coherencia entre Zod y OpenAPI | `src/schemas/medico.schema.js`, `src/config/swagger.ts` | Correcta | El campo `documento` se define como `type: "string"` en OpenAPI y el conjunto de `especialidad` mantiene valores en Title Case / PascalCase: `Clínica médica`, `Pediatría`, `Odontología`, `Nutrición`; esto alinea la documentación con el dominio y con el esquema de validación. |
+| Coherencia entre ejemplos Swagger y casos de prueba Postman | `README.md`, `src/config/swagger.ts`, `tests/` y colecciones Postman | Correcta | Los request bodies y ejemplos de turnos/médicos usados en Swagger son consistentes con las pruebas de petición / respuesta documentadas para CRUD y validación básica. |
+
+## Conclusión Técnica
+La alineación entre código, OpenAPI, Postman, Mermaid y ADRs es sólida en la medida en que la API ha sido documentada como un contrato técnico explícito y consistente con el dominio. La capa HTTP expresa bien la semántica de los recursos; la documentación de Swagger refleja rutas, códigos de respuesta y esquemas reutilizables; los ejemplos de prueba en Postman sostienen el comportamiento esperado; los diagramas Mermaid contextualizan la arquitectura y los ADR documentan decisiones de diseño. El punto más crítico es evitar la desactualización del contrato con el tiempo, especialmente cuando cambian rutas, validaciones o modelos. Para mitigar el drift de documentación, la estrategia recomendada es incorporar pruebas de contrato automáticas en CI/CD: validar que cada endpoint documentado responda con el mismo código HTTP, schema y payload esperado; ejecutar estas comprobaciones en cada push y bloqueador de PR si la especificación Swagger no coincide con la implementación. Además, se recomienda generar la especificación desde una fuente única y ejecutar smoke tests automáticos sobre la ruta `/api-docs` antes de desplegar. Esto reduce errores manuales y mantiene la documentación viva, verificable y sincronizada con la aplicación.
+
 ### Uso de inteligencia artificial
 
-| Tarea | Herramienta | Prompt utilizado | Respuesta generada | Ajuste manual aplicado |
-| --- | --- | --- | --- | --- |
-| Schema Zod | ChatGPT / Copilot | "Genera un esquema Zod para validar un turno médico" | Código Zod con campos básicos | Corrección de tipos y formato PascalCase |
-| Endpoints CRUD | Copilot | "Dame ejemplos de endpoints REST para Turnos y Médicos" | Listado de rutas GET/POST/PUT/DELETE | Ajuste de nombres y alineación con estructura del repo |
-| Tests en Postman | Copilot | "Genera scripts de validación para cada request en Postman" | Código JS para pestaña Tests | Ajuste de mensajes y variables dinámicas |
-| README inicial | Copilot | "Redacta un README.md con requisitos e instalación" | Bloque Markdown con requisitos y pasos | Inclusión de tabla de variables y estructura de carpetas |
-| Documentación endpoints | Copilot | "Documenta los endpoints con ejemplos de body y query params" | Sección detallada en Markdown | Ajuste de ejemplos y formato JSON |
+| Tarea | Herramienta | Tipo de salida | Ajuste manual aplicado |
+| --- | --- | --- | --- |
+| Anotaciones JSDoc para rutas Express | Copilot / IA asistida | Comentarios OpenAPI sobre endpoints REST | Ajuste de rutas, parámetros, bodies y respuestas para alinearlos con la API real |
+| Definición de esquemas OpenAPI | Copilot / IA asistida | `swagger.ts` con `components/schemas` | Corrección de tipos, enums y eliminación de seguridad no implementada |
+| Diagramas Mermaid (componentes y secuencia) | Copilot / IA asistida | Diagramas Mermaid en `README.md` | Ajuste de nodos para reflejar la arquitectura real con Socket.IO y persistencia JSON |
+| Plantillas ADR | Copilot / IA asistida | Archivos ADR en `docs/adr` | Corrección del formato y alineación con la estructura obligatoria requerida |
+| Revisión final del README y consolidación documental | Copilot / IA asistida | Documento final unificado | Ajuste de conclusión técnica, tabla de verificación y registro de uso de IA |

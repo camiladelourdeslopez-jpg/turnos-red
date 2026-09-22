@@ -1,0 +1,45 @@
+$kind: http-request
+method: GET
+url: "{{baseUrl}}/turnos/:id"
+description: Retorna un turno específico por su ID numérico. Devuelve 404 si no existe.
+body:
+  type: javascript
+  content: "pm.test(\"Código de estado 200\", () => {\r
+
+    \  pm.response.to.have.status(200);\r
+
+    });\r
+
+    \r
+
+    pm.test(\"Respuesta contiene nombre\", () => {\r
+
+    \  const body = pm.response.json();\r
+
+    \  pm.expect(body).to.have.property(\"nombre\");\r
+
+    });\r\n"
+scripts:
+  - type: afterResponse
+    code: ""
+    language: text/javascript
+  - type: beforeRequest
+    code: "pm.test(\"Código de estado 200\", () => {\r
+
+      \  pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Respuesta contiene paciente\", () => {\r
+
+      \  const body = pm.response.json();\r
+
+      \  pm.expect(body).to.have.property(\"paciente\");\r
+
+      });\r\n"
+    language: text/javascript
+order: 3000
+pathVariables:
+  id: "1"

@@ -1,0 +1,139 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "turnos-red.postman_collection",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "{{baseUrl}}"
+    }
+  ],
+  "paths": {
+    "/turnos": {
+      "get": {
+        "summary": "Listar todos los medicos",
+        "responses": {},
+        "description": "Retorna el listado completo de turnos."
+      },
+      "post": {
+        "summary": "Registrar un nuevo medico",
+        "responses": {
+          "200": {
+            "description": "Crear Médico",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "description": "Crea un nuevo turno. Emite el evento Socket.IO `turnoCreado`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "paciente": {
+                    "type": "string"
+                  },
+                  "documento": {
+                    "type": "string",
+                    "format": "utc-millisec"
+                  },
+                  "especialidad": {
+                    "type": "string"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "hora": {
+                    "type": "string",
+                    "format": "style"
+                  },
+                  "confirmado": {
+                    "type": "boolean"
+                  },
+                  "motivo": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "id": 101,
+                "paciente": "Carlos López",
+                "documento": "11223344",
+                "especialidad": "Cardiología",
+                "fecha": "2026-09-10",
+                "hora": "14:00",
+                "confirmado": false,
+                "motivo": "Consulta de rutina"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/turnos/{id}": {
+      "get": {
+        "summary": "Obtener Medico por ID",
+        "responses": {},
+        "description": "Retorna un turno específico por su ID numérico. Devuelve 404 si no existe."
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "example": 3
+        }
+      ],
+      "put": {
+        "summary": "Actualizar la informacion de un nvo medico",
+        "responses": {},
+        "description": "Actualiza los campos de un turno existente por ID. Devuelve 404 si no existe.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": {
+                    "type": "string"
+                  },
+                  "especialidad": {
+                    "type": "string"
+                  },
+                  "disponible": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "nombre": "Carlos López",
+                "especialidad": "Cardiología",
+                "disponible": true
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar Turno",
+        "responses": {},
+        "description": "Elimina un turno por ID. Emite el evento Socket.IO `turnoEliminado`. Devuelve 404 si no existe."
+      }
+    }
+  }
+}

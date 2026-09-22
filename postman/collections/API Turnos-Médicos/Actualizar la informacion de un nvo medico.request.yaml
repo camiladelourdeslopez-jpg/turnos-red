@@ -1,0 +1,41 @@
+$kind: http-request
+method: PUT
+url: "{{baseUrl}}/turnos/:id"
+description: Actualiza los campos de un turno existente por ID. Devuelve 404 si no existe.
+scripts:
+  - type: beforeRequest
+    code: ""
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Médico actualizado correctamente\", () => {\r
+
+      \    const body = pm.response.json();\r
+
+      \    pm.expect(body).to.have.property(\"disponible\");\r
+
+      });\r\n"
+    language: text/javascript
+order: 6000
+pathVariables:
+  - key: id
+    value: "1"
+    description: ""
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Carlos López\",\r
+
+    \  \"especialidad\": \"Cardiología\",\r
+
+    \  \"disponible\": true\r
+
+    }\r\n"

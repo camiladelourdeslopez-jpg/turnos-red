@@ -1,0 +1,46 @@
+$kind: http-request
+method: POST
+url: "{{baseUrl}}/turnos"
+description: Crea un nuevo turno. Emite el evento Socket.IO `turnoCreado`.
+scripts:
+  - type: afterResponse
+    code: "const jsonData = pm.response.json();\r
+
+      pm.collectionVariables.set(\"medicoId\", jsonData.id);\r
+
+      \r
+
+      pm.test(\"Status code is 201\", () => {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Médico creado correctamente\", () => {\r
+
+      \    pm.expect(jsonData).to.have.property(\"id\");\r
+
+      \    pm.expect(jsonData).to.have.property(\"paciente\");\r
+
+      });\r\n"
+    language: text/javascript
+  - type: beforeRequest
+    code: ""
+    language: text/javascript
+examples: .resources/Registrar un nuevo medico.resources/examples
+order: 5000
+body:
+  type: json
+  content: |
+    {
+      "id": 101,
+      "paciente": "Carlos López",
+      "documento": "11223344",
+      "especialidad": "Cardiología",
+      "fecha": "2026-09-10",
+      "hora": "14:00",
+      "confirmado": false,
+      "motivo": "Consulta de rutina"
+    }

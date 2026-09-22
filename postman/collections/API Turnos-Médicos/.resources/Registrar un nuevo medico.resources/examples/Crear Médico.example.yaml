@@ -1,0 +1,25 @@
+$kind: http-example
+description: Crea un nuevo turno. Emite el evento Socket.IO `turnoCreado`.
+request:
+  url: "{{baseUrl}}/turnos"
+  method: POST
+  body:
+    type: json
+    content: |-
+      {
+        "id": 3,
+        "paciente": "Carlos López",
+        "documento": "11223344",
+        "especialidad": "Cardiología",
+        "fecha": "2026-09-10",
+        "hora": "14:00",
+        "confirmado": false,
+        "motivo": "Consulta de rutina"
+      }
+response:
+  statusCode: 200
+  statusText: ""
+  body:
+    type: json
+    content: ""
+order: 1788456132499

@@ -1,0 +1,14 @@
+name: Turnos-Médicos ENV
+values:
+  - key: baseUrl
+    value: 'http://localhost:3000'
+  - key: turnoId
+    value: '1'
+  - key: turnoIdCreado
+    value: ''
+  - key: turnoIdInexistente
+    value: '9999'
+  - key: authToken
+    value: ''
+  - key: medicoId
+    value: ''

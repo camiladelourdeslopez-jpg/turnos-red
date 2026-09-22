@@ -1,0 +1,55 @@
+$kind: http-request
+method: GET
+url: "{{baseUrl}}/turnos"
+description: Retorna el listado completo de turnos.
+order: 2000
+scripts:
+  - type: afterResponse
+    code: |-
+      // ── 1. Código de estado ──────────────────────────────────────────────
+      pm.test('Status 200 OK', function () {
+        pm.response.to.have.status(200);
+      });
+
+      // ── 2. Content-Type JSON ─────────────────────────────────────────────
+      pm.test('Content-Type es application/json', function () {
+        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');
+      });
+
+      // ── 3. La respuesta es un array ──────────────────────────────────────
+      pm.test('La respuesta es un array', function () {
+        const body = pm.response.json();
+        pm.expect(body).to.be.an('array');
+      });
+
+      // ── 4. Validación de esquema JSON de cada turno ──────────────────────
+      pm.test('Cada turno cumple el esquema esperado', function () {
+        const turnos = pm.response.json();
+        pm.expect(turnos.length).to.be.greaterThan(0);
+
+        const schema = {
+          type: 'object',
+          required: ['id', 'paciente', 'documento', 'especialidad', 'fecha', 'hora', 'confirmado', 'motivo'],
+          properties: {
+            id:           { type: 'number' },
+            paciente:     { type: 'string' },
+            documento:    { type: 'string' },
+            especialidad: { type: 'string' },
+            fecha:        { type: 'string' },
+            hora:         { type: 'string' },
+            confirmado:   { type: 'boolean' },
+            motivo:       { type: 'string' }
+          }
+        };
+
+        turnos.forEach(function (turno) {
+          pm.expect(tv4.validate(turno, schema)).to.be.true;
+        });
+      });
+
+      // ── 5. Guardar el primer ID como variable dinámica ───────────────────
+      const turnos = pm.response.json();
+      if (turnos.length > 0) {
+        pm.environment.set('turnoId', turnos[0].id);
+      }
+    language: text/javascript
